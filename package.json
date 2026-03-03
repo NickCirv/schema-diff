@@ -1,0 +1,37 @@
+{
+  "name": "schema-diff",
+  "version": "1.0.0",
+  "description": "Diff JSON Schemas and SQL schemas. Spot breaking API changes before deploying.",
+  "type": "module",
+  "bin": {
+    "schema-diff": "./index.js",
+    "sdiff": "./index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "developer-tools",
+    "cli",
+    "nodejs",
+    "zero-dependencies",
+    "schema",
+    "diff",
+    "api",
+    "database"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NickCirv/schema-diff"
+  },
+  "homepage": "https://github.com/NickCirv/schema-diff#readme",
+  "bugs": {
+    "url": "https://github.com/NickCirv/schema-diff/issues"
+  },
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ]
+}
