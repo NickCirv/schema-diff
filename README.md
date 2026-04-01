@@ -1,3 +1,5 @@
+![Banner](banner.svg)
+
 # schema-diff
 > Diff JSON Schemas and SQL schemas. Spot breaking API changes before they hit production.
 
