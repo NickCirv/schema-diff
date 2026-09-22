@@ -1,106 +1,71 @@
-![schema-diff — diff JSON and SQL schemas, catch breaking API changes before they reach production](assets/banner.png)
+![schema-diff — Nicholas Ashkar editorial artwork](assets/nicholas-ashkar/banner.png)
 
-<div align="center">
+# schema-diff
 
-**Diff JSON Schemas and SQL schemas. Know exactly what changed — and whether it breaks your API contract.**
+Compare two JSON Schema or SQL schema files and flag changes classified as breaking.
 
-![license](https://img.shields.io/badge/license-MIT-blue?labelColor=0B0A09)
-![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen?labelColor=0B0A09)
-![node](https://img.shields.io/badge/node-%3E%3D18-brightgreen?labelColor=0B0A09)
-![formats](https://img.shields.io/badge/formats-JSON%20%2B%20SQL-FB923C?labelColor=0B0A09)
+Flattens supported JSON Schema properties or parses supported SQL table declarations, then renders a table, JSON or patch-style report.
 
-</div>
 
----
+<a id="install"></a>
 
-A schema change that looks minor can silently break consumers. `schema-diff` compares two versions of a JSON Schema or SQL schema file, classifies every change as breaking or non-breaking, and exits `1` if any breaking changes are found — making it safe to use as a CI gate.
+## Quickstart
 
-```
-schema-diff v1.json v2.json
-
-schema-diff · User Schema
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-+ properties.phone         string (optional)
-~ properties.email.format  "email" → "uri"    ⚠ breaking
-- properties.username      removed             ⚠ breaking
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2 breaking · 1 non-breaking
-```
-
-## Install
-
-No install, no npm account — run straight from GitHub with zero dependencies:
+Package runtime requirement: Node.js `>=20`. Git is needed to obtain this pinned source checkout.
 
 ```bash
-npx github:NickCirv/schema-diff
+git clone https://github.com/NickCirv/schema-diff.git
+cd schema-diff
+git checkout 569c4f4126be07018db10c7c7e1a4791a53850c2
+node index.js --help
 ```
+
+This source-derived example has not been executed in this review. Help lists formats. Supply two local schema files for a comparison.
+
+
+
+<a id="what-counts-as-breaking"></a>
+
+<a id="ref-resolution"></a>
 
 ## Usage
 
 ```bash
-# diff two JSON Schema files
-npx github:NickCirv/schema-diff v1.json v2.json
-
-# diff two SQL schema files
-npx github:NickCirv/schema-diff v1.sql v2.sql
-
-# show only breaking changes
-npx github:NickCirv/schema-diff v1.json v2.json --breaking
-
-# machine-readable JSON output
-npx github:NickCirv/schema-diff v1.json v2.json --format json
-
-# RFC 6902 JSON Patch output
-npx github:NickCirv/schema-diff v1.json v2.json --format patch
-
-# ignore an internal path
-npx github:NickCirv/schema-diff v1.json v2.json --ignore properties.internal
-
-# AI-powered plain-English summary (requires ANTHROPIC_API_KEY)
-npx github:NickCirv/schema-diff v1.json v2.json --ai
+node index.js before.json after.json --format json
+node index.js before.sql after.sql --breaking
+node index.js before.json after.json --ignore properties.internal
 ```
 
-| Flag | Description |
-|------|-------------|
-| `--breaking` | Show only breaking changes |
-| `--format table\|json\|patch` | Output format (default: `table`) |
-| `--ignore <path>` | Ignore a property path (repeatable) |
-| `--ai` | Print an AI plain-English summary via `ANTHROPIC_API_KEY` |
-| `-v, --version` | Show version |
-| `-h, --help` | Show help |
+Exit 1 means a breaking change was detected; invalid input or processing errors use exit 2. `--breaking` filters presentation, while the breaking-change exit policy applies generally.
 
-## What counts as breaking
+[Command reference](docs/REFERENCE.md) covers arguments, modes and output controls.
 
-| Schema type | Breaking changes detected |
-|-------------|--------------------------|
-| **JSON Schema** | Field removed · type narrowed · `required` promoted · `format` changed · enum values removed · pattern made stricter · `minimum`/`maximum` tightened |
-| **SQL** | Column dropped · type changed · `NOT NULL` added without default · column size shrunk · foreign key reference removed · table dropped |
 
-Non-breaking changes (field added optional, enum values added, table added) are shown but do not trigger exit `1`.
+<a id="what-it-is-not"></a>
 
-## CI usage
+## Behavior and limits
 
-Exit code `1` if any breaking change is detected — safe to fail your pipeline:
+Both parsers implement subsets and the breaking-change classification is a policy heuristic, not proof about every consumer. Local references are handled within limits; complex SQL dialects need independent review. `--ai` sends report context to Anthropic with `ANTHROPIC_API_KEY`. Patch-format output is a report, not an automatically applied migration.
 
-```yaml
-- name: Guard schema contract
-  run: npx github:NickCirv/schema-diff schema-v1.json schema-v2.json
-```
 
-## $ref resolution
+<a id="ci-usage"></a>
 
-JSON Schema `$ref` pointers (internal `#/` references) are resolved before diffing, so `$defs`-based schemas work correctly.
+## Development
 
-## What it is NOT
+Declared package scripts:
 
-- **Not a migration generator.** It tells you what changed — it does not write the migration SQL or code for you.
-- **Not a JSON Schema validator.** It diffs schemas against each other, not against instance data.
-- **Not exhaustive on SQL.** It parses `CREATE TABLE` statements. Complex SQL (views, triggers, stored procedures) is out of scope.
+| Script | Command |
+| --- | --- |
+| `test` | `node --test` |
 
----
+The smoke test syntax-checks the entrypoint; it does not exercise CLI behavior or integrations.
 
-<div align="center">
-<sub>Zero dependencies · Node 18+ · MIT · by <a href="https://github.com/NickCirv">NickCirv</a></sub>
-</div>
+## Research
+
+[Source review and claim ledger](docs/RESEARCH.md) records revision `569c4f4126be`, inspected files and verification gaps.
+
+## License and attribution
+
+Protected license and attribution files remain unchanged: [LICENSE](https://github.com/NickCirv/schema-diff/blob/569c4f4126be07018db10c7c7e1a4791a53850c2/LICENSE).
+
+[Artwork credits](assets/nicholas-ashkar/CREDITS.md) · [Nicholas Ashkar — consulting](https://nicholashkar.com/#oxblood-contact)
